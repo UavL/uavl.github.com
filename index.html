@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/nocturne-070ea267-bd7f-45a5-931a-86635557f29a/styles.css">
+<script src="_ds/nocturne-070ea267-bd7f-45a5-931a-86635557f29a/_ds_bundle.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&amp;display=swap">
+<style>
+  html, body { margin: 0; background: #f3f5fe; color: #292b31; font-family: var(--font-body); }
+  a { color: var(--color-accent-700); text-decoration: none; border-bottom: 1px solid var(--color-accent-300); }
+  a:hover { color: var(--color-accent-600); border-bottom-color: var(--color-accent-600); }
+  a:focus-visible { outline: 2px solid var(--color-accent-600); outline-offset: 2px; }
+</style>
+</helmet>
+<main style="min-height: 100vh; background: var(--color-neutral-100); color: var(--color-neutral-900); padding: 56px 28px 96px; display: flex; justify-content: center; overflow: hidden; position: relative;">
+  <div aria-hidden="true" style="position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; mask-image: radial-gradient(68% 62% at 55% 45%, #000 25%, rgba(0,0,0,0.5) 65%, transparent 92%), linear-gradient(90deg, transparent 0, #000 15%, #000 85%, transparent 100%), linear-gradient(180deg, transparent 0, #000 12%, #000 82%, transparent 100%); mask-composite: intersect; -webkit-mask-image: radial-gradient(68% 62% at 55% 45%, #000 25%, rgba(0,0,0,0.5) 65%, transparent 92%), linear-gradient(90deg, transparent 0, #000 15%, #000 85%, transparent 100%), linear-gradient(180deg, transparent 0, #000 12%, #000 82%, transparent 100%); -webkit-mask-composite: source-in;">
+    <canvas ref="{{ canvasRef }}" style="display: block; width: 100%; height: 100%;"></canvas>
+  </div>
+  <div style="position: relative; z-index: 1; width: 100%; max-width: 880px; display: grid; grid-template-columns: minmax(0, 168px) minmax(0, 1fr); gap: 56px; align-items: start;">
+
+    <aside style="position: sticky; top: 56px; display: flex; flex-direction: column; gap: var(--space-2); font-size: 13px; line-height: 1.7; color: var(--color-neutral-600); z-index: 2;">
+      <span style="display: block; width: 24px; height: 2px; background: var(--color-accent-600); margin-bottom: var(--space-4);"></span>
+      <p style="margin: 0; color: var(--color-neutral-900); font-family: var(--font-heading); font-weight: 500;">Segler Ink</p>
+      <p style="margin: 0;">Ink for E-Ink</p>
+      <p style="margin: 0;">Prototype, 2026</p>
+    </aside>
+
+    <div style="display: flex; flex-direction: column; gap: 72px; min-width: 0;">
+
+      <section style="position: relative; display: flex; flex-direction: column; gap: 28px; padding: 24px 0 56px;">
+        <h1 style="position: relative; z-index: 1; margin: 0; font-family: var(--font-heading); font-weight: 500; font-size: clamp(30px, 5vw, 46px); line-height: 1.1; letter-spacing: -0.02em; max-width: 14ch; text-wrap: pretty;">Ink for E-Ink</h1>
+        <p style="position: relative; z-index: 1; margin: 0; font-size: 18px; line-height: 1.65; max-width: 44ch; color: var(--color-neutral-800); text-wrap: pretty;">Creating a E-Ink device which doesnt lack anything in comparison to other lcd/oled devices and outperforms them with every advantage of an e-ink screen.</p>
+      </section>
+
+      <section style="position: relative; z-index: 1; display: flex; flex-direction: column; gap: 24px;">
+        <h2 style="margin: 0; font-family: var(--font-heading); font-weight: 500; font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-neutral-600);">What is different</h2>
+        <div style="display: flex; flex-direction: column; gap: 20px; max-width: 52ch;">
+          <p style="margin: 0; font-size: 16px; line-height: 1.6; color: var(--color-neutral-800);">A high refresh rate panel. Scrolling, typing and drawing keep up with the hand instead of trailing it.</p>
+          <p style="margin: 0; font-size: 16px; line-height: 1.6; color: var(--color-neutral-800);">One device for both jobs. An ereader that is also usable as a tablet, without switching to a backlit screen for anything interactive.</p>
+          <p style="margin: 0; font-size: 16px; line-height: 1.6; color: var(--color-neutral-800);">Reflective by nature. No backlight, no flicker, readable in direct sun, days of battery instead of hours.</p>
+          <p style="margin: 0; font-size: 16px; line-height: 1.6; color: var(--color-neutral-800);">Open foundation. The work builds on the Modos Labs Glider rather than starting from a closed platform.</p>
+        </div>
+      </section>
+
+      <sc-if value="{{ showTargets }}" hint-placeholder-val="{{ true }}">
+        <section style="position: relative; z-index: 1; display: flex; flex-direction: column; gap: 24px;">
+          <h2 style="margin: 0; font-family: var(--font-heading); font-weight: 500; font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-neutral-600);">Targets</h2>
+          <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; background: var(--color-neutral-300); border: 1px solid var(--color-neutral-300); border-radius: var(--radius-md); overflow: hidden;">
+            <div style="background: var(--color-neutral-100); padding: 20px;">
+              <p style="margin: 0 0 6px; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-neutral-600);">Refresh rate</p>
+              <p style="margin: 0; font-family: var(--font-heading); font-size: 26px; font-weight: 500; letter-spacing: -0.01em;">60 Hz+</p>
+            </div>
+            <div style="background: var(--color-neutral-100); padding: 20px;">
+              <p style="margin: 0 0 6px; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-neutral-600);">Input latency</p>
+              <p style="margin: 0; font-family: var(--font-heading); font-size: 26px; font-weight: 500; letter-spacing: -0.01em;">&lt; 30 ms</p>
+            </div>
+            <div style="background: var(--color-neutral-100); padding: 20px;">
+              <p style="margin: 0 0 6px; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-neutral-600);">Panel</p>
+              <p style="margin: 0; font-family: var(--font-heading); font-size: 26px; font-weight: 500; letter-spacing: -0.01em;">Monochrome</p>
+            </div>
+            <div style="background: var(--color-neutral-100); padding: 20px;">
+              <p style="margin: 0 0 6px; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-neutral-600);">Battery</p>
+              <p style="margin: 0; font-family: var(--font-heading); font-size: 26px; font-weight: 500; letter-spacing: -0.01em;">Days</p>
+            </div>
+          </div>
+          <p style="margin: 0; font-size: 13px; line-height: 1.6; color: var(--color-neutral-600);">Design targets for the prototype, not measured results.</p>
+        </section>
+      </sc-if>
+
+      <section style="position: relative; z-index: 1; display: flex; flex-direction: column; gap: 14px; border-top: 1px solid var(--color-neutral-300); padding-top: 28px;">
+        <p style="margin: 0; font-size: 14px; line-height: 1.7; color: var(--color-neutral-700); max-width: 48ch;">Segler stands for fluidity and smoothness, and for speed. It also respects the basis of the project, which is the Modos Labs Glider.</p>
+        <p style="margin: 0; font-size: 13px; color: var(--color-neutral-600);">Segler Ink</p>
+      </section>
+
+    </div>
+  </div>
+</main>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;motionSpeed&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:1,&quot;min&quot;:0.2,&quot;max&quot;:2.5,&quot;step&quot;:0.1,&quot;unit&quot;:&quot;x&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Sketch&quot;},&quot;sketchWeight&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:1,&quot;min&quot;:0.5,&quot;max&quot;:1.8,&quot;step&quot;:0.1,&quot;unit&quot;:&quot;x&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Sketch&quot;},&quot;showTargets&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Content&quot;}}">
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.canvasRef = React.createRef();
+  }
+
+  renderVals() {
+    return { canvasRef: this.canvasRef, showTargets: this.props.showTargets ?? true };
+  }
+
+  componentDidMount() {
+    // Click the water to drop a snack the boat fetches; click near the boat
+    // to drop a stone that rocks it.
+    this.onPointer = (e) => {
+      const c = this.canvasRef.current;
+      if (!c) return;
+      const r = c.getBoundingClientRect();
+      const sx = (this.lastW || r.width) / (r.width || 1);
+      const sy = (this.lastH || r.height) / (r.height || 1);
+      const x = (e.clientX - r.left) * sx, y = (e.clientY - r.top) * sy;
+      const now = performance.now();
+      if (!this.drops) this.drops = [];
+      const b = this.boat;
+      const near = b ? Math.hypot(b.x - x, b.y - y) : 1e9;
+      if (near < 70) {
+        this.drops.push({ x: x, y: y, t: now });
+        b.rock = Math.min(1, (b.rock || 0) + 0.9);
+      } else {
+        this.drops = this.drops.filter((d) => !d.snack);
+        this.drops.push({ x: x, y: y, t: now, snack: true });
+        if (b && near < 220) b.rock = Math.min(1, (b.rock || 0) + (1 - near / 220) * 0.5);
+      }
+    };
+    window.addEventListener('pointerdown', this.onPointer, { passive: true });
+    this.startSketch();
+  }
+
+  componentWillUnmount() {
+    if (this.raf) cancelAnimationFrame(this.raf);
+    if (this.ro) this.ro.disconnect();
+    window.removeEventListener('pointerdown', this.onPointer);
+  }
+
+  componentDidUpdate(prev) {
+    if (prev.motionSpeed !== this.props.motionSpeed || prev.sketchWeight !== this.props.sketchWeight) {
+      if (this.raf) cancelAnimationFrame(this.raf);
+      this.startSketch();
+    }
+  }
+
+  startSketch() {
+    const canvas = this.canvasRef.current;
+    if (!canvas) return;
+    const W = Math.max(360, Math.round(canvas.clientWidth));
+    const H = Math.max(360, Math.round(canvas.clientHeight));
+    if (!this.ro) {
+      this.ro = new ResizeObserver(() => {
+        const c = this.canvasRef.current;
+        if (!c) return;
+        if (Math.abs(c.clientWidth - this.lastW) > 2 || Math.abs(c.clientHeight - this.lastH) > 2) {
+          if (this.raf) cancelAnimationFrame(this.raf);
+          this.startSketch();
+        }
+      });
+      this.ro.observe(canvas);
+    }
+    this.lastW = canvas.clientWidth;
+    this.lastH = canvas.clientHeight;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = W * dpr;
+    canvas.height = H * dpr;
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+
+    const graphite = '41, 43, 49';
+    const speed = this.props.motionSpeed ?? 1;
+    const weight = this.props.sketchWeight ?? 0.85;
+
+    // Stable per-sample jitter so strokes look hand-drawn instead of noisy.
+    const jitter = [];
+    for (let i = 0; i < 4096; i++) jitter.push((Math.random() - 0.5) * 2);
+    const jit = (i) => jitter[i % jitter.length];
+
+    // Pencil stroke: a few overlapping passes at low alpha.
+    const pencil = (pts, alpha, width, passes) => {
+      for (let p = 0; p < passes; p++) {
+        ctx.beginPath();
+        for (let i = 0; i < pts.length; i++) {
+          const o = p * 0.9;
+          const x = pts[i][0] + jit(i * 3 + p * 101) * 1.1;
+          const y = pts[i][1] + jit(i * 7 + p * 57) * 1.1 + (p - (passes - 1) / 2) * 0.55 + o * 0;
+          if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = 'rgba(' + graphite + ',' + (alpha * weight * (p === 0 ? 1 : 0.55)).toFixed(3) + ')';
+        ctx.lineWidth = width;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.stroke();
+      }
+    };
+
+    const waveY = (x, t, k, amp, base, ph) =>
+      base + Math.sin(x * k + t * 1.1 + ph) * amp + Math.sin(x * k * 2.3 - t * 0.7 + ph) * amp * 0.35;
+
+    const quad = (p0, p1, p2, n) => {
+      const out = [];
+      for (let i = 0; i <= n; i++) {
+        const u = i / n, v = 1 - u;
+        out.push([v * v * p0[0] + 2 * v * u * p1[0] + u * u * p2[0], v * v * p0[1] + 2 * v * u * p1[1] + u * u * p2[1]]);
+      }
+      return out;
+    };
+
+    // Seen from above: hull outline, boom swung out, sails bellied to leeward.
+    const drawBoat = (x, y, angle, t, rock) => {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(angle + Math.sin(t * 9) * rock * 0.16);
+      const breathe = Math.sin(t * 1.1) * 2.5;
+      const belly = 11 + breathe + rock * 5;
+      const lee = 1;
+      // hull
+      pencil(quad([40, 0], [20, -15], [-20, -12], 10).concat(
+        [[-31, -7], [-33, 0], [-31, 7]],
+        quad([-20, 12], [20, 15], [40, 0], 10)
+      ), 0.5, 1.6, 3);
+      // deck line and cockpit
+      pencil([[-20, 0], [24, 0]], 0.16, 1.0, 1);
+      // mainsail: luff at the mast, curved leech, boom under it
+      pencil(quad([4, 0], [-10, (20 + belly) * lee], [-31, 11 * lee], 14), 0.46, 1.6, 3);
+      pencil([[4, 0], [-31, 11 * lee]], 0.3, 1.2, 2);
+      pencil(quad([4, 0], [-8, (12 + belly * 0.5) * lee], [-24, 8 * lee], 10), 0.18, 1.1, 1);
+      // jib forward of the mast
+      pencil(quad([38, 1], [18, (15 + belly * 0.6) * lee], [6, 1], 12), 0.42, 1.5, 2);
+      pencil([[38, 1], [6, 1]], 0.2, 1.1, 1);
+      // mast
+      ctx.beginPath();
+      ctx.arc(4, 0, 2.6, 0, 6.3);
+      ctx.fillStyle = 'rgba(' + graphite + ',' + (0.5 * weight).toFixed(3) + ')';
+      ctx.fill();
+      ctx.restore();
+    };
+
+    const boat = this.boat || (this.boat = { x: W * 0.55, y: H * 0.42, a: 0, wake: [] });
+    const start = performance.now();
+    this.lastNow = start;
+
+    const frame = (now) => {
+      const t = ((now - start) / 1000) * speed;
+      const dt = Math.min(0.05, (now - this.lastNow) / 1000) * speed;
+      this.lastNow = now;
+      ctx.clearRect(0, 0, W, H);
+
+      // water seen from above: sinuous swell lines drifting left to right
+      const drift = t * 26;
+      const rows = Math.ceil(H / 38) + 2;
+      for (let r = 0; r < rows; r++) {
+        const base = 20 + r * 38;
+        const k = 0.012 + (r % 3) * 0.0025;
+        const amp = 8 + (r % 4) * 2.5;
+        const ph = r * 1.7;
+        const pts = [];
+        for (let x = -40; x <= W + 40; x += 14) pts.push([x, waveY(x - drift, t, k, amp, base, ph)]);
+        pencil(pts, 0.13 + (r % 3) * 0.02, 1.2, 2);
+      }
+
+      // dropped stones: rings spread and fade, and the swell rocks the boat
+      const drops = this.drops || (this.drops = []);
+      for (let d = drops.length - 1; d >= 0; d--) {
+        const drop = drops[d];
+        const age = (now - drop.t) / (drop.snack ? 9000 : 2400);
+        if (age >= 1) { drops.splice(d, 1); continue; }
+        const rings = drop.snack ? 2 : 3;
+        for (let i = 0; i < rings; i++) {
+          const rad = 10 + i * 12 + age * (drop.snack ? 20 : 46);
+          const ring = [];
+          for (let a = 0; a <= 6.4; a += 0.3) {
+            const wob = 1 + Math.sin(a * 3 + t * 2 + i) * 0.07;
+            ring.push([drop.x + Math.cos(a) * rad * wob, drop.y + Math.sin(a) * rad * wob]);
+          }
+          pencil(ring, (drop.snack ? 0.2 : 0.24) * (1 - age) * (1 - i * 0.25), 1.1, 1);
+        }
+        if (drop.snack) {
+          pencil([[drop.x - 4, drop.y - 4], [drop.x + 4, drop.y + 4]], 0.4, 1.4, 2);
+          pencil([[drop.x + 4, drop.y - 4], [drop.x - 4, drop.y + 4]], 0.4, 1.4, 2);
+        }
+      }
+
+      // a snack to fetch, otherwise the boat keeps its own long lazy course
+      const snack = drops.find((d) => d.snack);
+      const tgt = snack || { x: W * 0.5 + Math.cos(t * 0.12) * W * 0.34, y: H * 0.45 + Math.sin(t * 0.17) * H * 0.22 };
+      const dx = tgt.x - boat.x, dy = tgt.y - boat.y;
+      const dist = Math.hypot(dx, dy);
+      let diff = Math.atan2(dy, dx) - boat.a;
+      while (diff > Math.PI) diff -= Math.PI * 2;
+      while (diff < -Math.PI) diff += Math.PI * 2;
+      boat.a += Math.max(-1.5 * dt, Math.min(1.5 * dt, diff));
+      const v = 78 * Math.min(1, Math.max(0.18, dist / 120));
+      boat.x += Math.cos(boat.a) * v * dt;
+      boat.y += Math.sin(boat.a) * v * dt;
+      const m = 90;
+      if (boat.x < -m) boat.x = W + m; if (boat.x > W + m) boat.x = -m;
+      if (boat.y < -m) boat.y = H + m; if (boat.y > H + m) boat.y = -m;
+
+      // wake
+      boat.wake.push([boat.x - Math.cos(boat.a) * 32, boat.y - Math.sin(boat.a) * 32]);
+      if (boat.wake.length > 46) boat.wake.shift();
+      const w = boat.wake;
+      let cut = 0;
+      for (let i = 1; i < w.length; i++) if (Math.hypot(w[i][0] - w[i - 1][0], w[i][1] - w[i - 1][1]) > 120) cut = i;
+      if (w.length - cut > 4) pencil(w.slice(cut), 0.16, 1.1, 1);
+
+      // collect the snack, then carry on
+      if (snack && Math.hypot(snack.x - boat.x, snack.y - boat.y) < 26) {
+        drops.splice(drops.indexOf(snack), 1);
+        drops.push({ x: snack.x, y: snack.y, t: now });
+        boat.rock = Math.min(1, (boat.rock || 0) + 0.7);
+      }
+      boat.rock = Math.max(0, (boat.rock || 0) - dt * 0.8);
+
+      drawBoat(boat.x, boat.y, boat.a, t, boat.rock);
+
+      this.raf = requestAnimationFrame(frame);
+    };
+    this.raf = requestAnimationFrame(frame);
+  }
+}
+</script>
+</body>
+</html>
