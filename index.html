@@ -227,41 +227,57 @@ class Component extends DCLogic {
       ctx.translate(x, y);
 
       // hull, lying along the heading and flattened by the viewing angle
+      // slim hull, long and narrow as seen from high above
       ctx.save();
       ctx.rotate(angle);
-      ctx.scale(1, 0.52);
-      pencil(quad([34, 0], [18, -13], [-16, -11], 10).concat(
-        [[-26, -6], [-28, 0], [-26, 6]],
-        quad([-16, 11], [18, 13], [34, 0], 10)
-      ), 0.52, 1.7, 3);
-      pencil([[-16, 0], [22, 0]], 0.14, 1.0, 1);
+      ctx.scale(1, 0.4);
+      const hull = quad([44, 0], [24, -14], [-14, -12], 10).concat(
+        [[-26, -8], [-29, 0], [-26, 8]],
+        quad([-14, 12], [24, 14], [44, 0], 10)
+      );
+      pencil(hull, 0.52, 1.8, 3);
+      ctx.beginPath();
+      ctx.moveTo(hull[0][0], hull[0][1]);
+      for (const p of hull) ctx.lineTo(p[0], p[1]);
+      ctx.fillStyle = 'rgba(' + graphite + ',' + (0.07 * weight).toFixed(3) + ')';
+      ctx.fill();
       ctx.restore();
-      // cabin trunk and cockpit rail
+      // cabin trunk, cockpit and deck planking
       ctx.save();
       ctx.rotate(angle);
-      pencil([[-2, -3], [14, -2], [14, 2], [-2, 3]], 0.22, 1.1, 1);
+      pencil([[-1, -3.4], [17, -2.6], [17, 2.6], [-1, 3.4], [-1, -3.4]], 0.3, 1.2, 2);
+      pencil([[-18, -2.6], [-6, -2.6]], 0.26, 1.4, 2);
+      pencil([[-18, 2.6], [-6, 2.6]], 0.26, 1.4, 2);
+      pencil([[22, 0], [40, 0]], 0.14, 1.0, 1);
       ctx.restore();
 
-      // rig, upright in screen space
+      // rig: tall slender sails, upright in screen space
       ctx.rotate(heel);
-      const mh = 96, mx = 3 * face;
-      pencil([[mx, -4], [mx * 0.6, -mh]], 0.5, 1.6, 2);
-      // boom, swung out to leeward
-      const boomX = -(30 + rock * 4) * spread * face;
-      pencil([[mx, -8], [boomX, -14]], 0.34, 1.3, 2);
-      // mainsail: luff up the mast, bellied leech down to the boom end
-      const belly = (16 + breathe + rock * 6) * spread * face;
-      pencil(quad([mx * 0.6, -mh + 2], [belly, -mh * 0.55], [boomX, -14], 16), 0.44, 1.5, 3);
-      pencil([[mx * 0.6, -mh + 2], [boomX, -14]], 0.2, 1.1, 1);
-      pencil(quad([mx * 0.6, -mh * 0.72], [belly * 0.6, -mh * 0.45], [boomX * 0.55, -13], 12), 0.13, 1.0, 1);
-      // jib, forward of the mast
-      const bow = 24 * spread * -face;
-      pencil(quad([mx * 0.6, -mh + 6], [belly * 0.5 - bow * 0.25, -mh * 0.5], [bow, -9], 14), 0.4, 1.5, 2);
-      pencil([[mx * 0.6, -mh + 6], [bow, -9]], 0.22, 1.1, 1);
+      const mh = 104, mx = 3 * face;
+      pencil([[mx, -4], [mx * 0.5, -mh]], 0.5, 1.6, 2);
+      const boomX = -(26 + rock * 4) * spread * face;
+      pencil([[mx, -9], [boomX, -13]], 0.34, 1.3, 2);
+      // mainsail: narrow, deep, leech curving down to the boom end
+      const belly = (13 + breathe + rock * 5) * spread * face;
+      pencil(quad([mx * 0.5, -mh + 3], [belly, -mh * 0.5], [boomX, -13], 18), 0.46, 1.5, 3);
+      pencil([[mx * 0.5, -mh + 3], [boomX, -13]], 0.2, 1.1, 1);
+      // sail cloth: two faint seams across the panel
+      pencil(quad([mx * 0.5, -mh * 0.74], [belly * 0.62, -mh * 0.42], [boomX * 0.5, -12], 12), 0.12, 1.0, 1);
+      pencil(quad([mx * 0.5, -mh * 0.45], [belly * 0.4, -mh * 0.26], [boomX * 0.28, -11], 10), 0.1, 1.0, 1);
+      // genoa: long luff reaching forward to the bow
+      const bow = 34 * spread * -face;
+      pencil(quad([mx * 0.5, -mh + 12], [belly * 0.45 + bow * 0.35, -mh * 0.46], [bow, -8], 16), 0.4, 1.5, 2);
+      pencil([[mx * 0.5, -mh + 12], [bow, -8]], 0.22, 1.1, 1);
       ctx.restore();
     };
 
-    const boat = this.boat || (this.boat = { x: W * 0.55, y: H * 0.42, a: 0, wake: [] });
+    const boat = this.boat || (this.boat = {
+      x: W * (0.15 + Math.random() * 0.7),
+      y: H * (0.15 + Math.random() * 0.7),
+      a: Math.random() * Math.PI * 2,
+      phase: Math.random() * 100,
+      wake: []
+    });
     const start = performance.now();
     this.lastNow = start;
 
@@ -271,17 +287,145 @@ class Component extends DCLogic {
       this.lastNow = now;
       ctx.clearRect(0, 0, W, H);
 
-      // water seen from above: sinuous swell lines drifting left to right
-      const drift = t * 26;
-      const rows = Math.ceil(H / 38) + 2;
-      for (let r = 0; r < rows; r++) {
-        const base = 20 + r * 38;
-        const k = 0.012 + (r % 3) * 0.0025;
-        const amp = 8 + (r % 4) * 2.5;
-        const ph = r * 1.7;
+      // Open water from above. Two layers: light chop everywhere, plus a few
+      // long current streaks of different sizes wandering through the frame.
+      // Low-frequency flow field — broad, gently turning, no tight swirls.
+      // Velocity is the curl of a stream function, so the field is
+      // divergence-free: nothing piles up in one place over time.
+      // Nearly static field: the pattern itself must not travel sideways,
+      // otherwise the streaks appear to move across their own lines.
+      const A1 = 120, k1 = 0.0026, A2 = 150, k2 = 0.0021, A3 = 80, k3 = 0.0015;
+      const flowVec = (x, y) => {
+        const vx = A2 * k2 * Math.cos(y * k2 - t * 0.004) + A3 * k3 * Math.cos((x + y) * k3 + t * 0.006);
+        const vy = -(A1 * k1 * Math.cos(x * k1 + t * 0.005) + A3 * k3 * Math.cos((x + y) * k3 + t * 0.006));
+        return [vx, vy];
+      };
+      const flowAt = (x, y) => {
+        const v = flowVec(x, y);
+        return Math.atan2(v[1], v[0]);
+      };
+
+      // light chop: every mark drifts along the local flow, so the whole
+      // surface moves with the current instead of sliding one way
+      // Marks sit on a fixed jittered grid — uniform by construction — and
+      // only heave back and forth on the swell, so no region can empty out.
+      const cell = 46;
+      const cols2 = Math.ceil(W / cell) + 2, rows2 = Math.ceil(H / cell) + 2;
+      // all chop marks share 12 alpha/width combos: batch each into one path
+      const buckets = this.buckets || (this.buckets = Array.from({ length: 12 }, () => []));
+      for (const b of buckets) b.length = 0;
+      for (let gy = -1; gy < rows2; gy++) {
+        for (let gx = -1; gx < cols2; gx++) {
+          const seed = (gx * 131 + gy * 419) & 4095;
+          const bx = gx * cell + jit(seed) * cell * 0.55;
+          const by = gy * cell + jit(seed + 811) * cell * 0.55;
+          const fv = flowVec(bx, by);
+          const fm = Math.hypot(fv[0], fv[1]) || 1;
+          // One dominant swell direction across the whole sea, bending slowly
+          // in long arcs — the marks are crests, so they run across it.
+          const dir = 0.42
+            + 0.3 * Math.sin(bx * 0.0011 + by * 0.0008)
+            + 0.18 * Math.sin(by * 0.0016 - bx * 0.0006)
+            + Math.atan2(fv[1], fv[0]) * 0.1;
+          // crest phase: marks gather into long swell trains
+          const proj = bx * Math.cos(dir) + by * Math.sin(dir);
+          const ph = Math.sin(proj * 0.028 - t * 0.85) + 0.45 * Math.sin(proj * 0.061 - t * 1.3);
+          const on = Math.max(0, Math.abs(ph) - 0.2) / 1.25;
+          // heave along the swell's travel, zero net travel
+          const heave = Math.sin(proj * 0.028 - t * 0.85) * 9;
+          const px = bx + Math.cos(dir) * heave + (fv[0] / fm) * 4;
+          const py = by + Math.sin(dir) * heave + (fv[1] / fm) * 4;
+          const fa = dir + Math.PI / 2 + jit(seed + 211) * 0.3;
+          const l = (9 + on * 26) * (0.8 + (jit(seed + 23) + 1) * 0.2);
+          const bow = 2 + (jit(seed + 97) + 1) * 2.5;
+          const nx = -Math.sin(fa), ny = Math.cos(fa);
+          const c = Math.cos(fa) * l * 0.5, s = Math.sin(fa) * l * 0.5;
+          buckets[Math.min(3, Math.floor(on * 4)) * 3 + (seed % 3)].push(
+            quad([px - c, py - s], [px + nx * bow, py + ny * bow], [px + c, py + s], 3));
+        }
+      }
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      for (let bi = 0; bi < 12; bi++) {
+        const marks = buckets[bi];
+        if (!marks.length) continue;
+        ctx.beginPath();
+        for (const pts of marks) {
+          for (let i = 0; i < pts.length; i++) {
+            const x = pts[i][0] + jit(i * 3 + bi * 101) * 0.9;
+            const y = pts[i][1] + jit(i * 7 + bi * 57) * 0.9;
+            if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+          }
+        }
+        ctx.strokeStyle = 'rgba(' + graphite + ',' + ((0.045 + Math.floor(bi / 3) * 0.032) * weight).toFixed(3) + ')';
+        ctx.lineWidth = 1.0 + (bi % 3) * 0.25;
+        ctx.stroke();
+      }
+
+      // current streaks
+      // Streaks live a limited time and respawn at a uniformly random spot,
+      // so the flow can never sweep them all into one corner.
+      const seedStreak = (i, aged) => {
+        const big = i % 3 === 0;
+        return {
+          x: Math.random() * (W + 120) - 60,
+          y: Math.random() * (H + 120) - 60,
+          seed: Math.floor(Math.random() * 4000),
+          len: big ? 520 + Math.random() * 760 : 165 + Math.random() * 420,
+          wgt: big ? 2 + Math.random() * 2 : 0.85 + Math.random() * 1.5,
+          band: big ? 4 + Math.floor(Math.random() * 3) : 2 + Math.floor(Math.random() * 2),
+          alpha: big ? 0.09 + Math.random() * 0.09 : 0.07 + Math.random() * 0.11,
+          spd: 7 + Math.random() * 14,
+          life: 9 + Math.random() * 12,
+          age: aged ? Math.random() * 6 : 0
+        };
+      };
+      const streaks = this.streaks || (this.streaks = Array.from({ length: 18 }, (_, i) => seedStreak(i, true)));
+      for (let si = 0; si < streaks.length; si++) {
+        let st = streaks[si];
+        st.age += dt;
+        const out = st.x < -st.len - 120 || st.x > W + st.len + 120 || st.y < -st.len - 120 || st.y > H + st.len + 120;
+        if (st.age > st.life || out) { st = streaks[si] = seedStreak(si, false); }
+        // fade in and out so the swap is invisible
+        const fade = Math.min(1, st.age / 1.2) * Math.min(1, Math.max(0, (st.life - st.age) / 1.2));
+        const sv = flowVec(st.x, st.y);
+        st.x += sv[0] * st.spd * 3 * dt;
+        st.y += sv[1] * st.spd * 3 * dt;
+
+        const steps = Math.max(7, Math.round(st.len / 34));
         const pts = [];
-        for (let x = -40; x <= W + 40; x += 14) pts.push([x, waveY(x - drift, t, k, amp, base, ph)]);
-        pencil(pts, 0.13 + (r % 3) * 0.02, 1.2, 2);
+        let cx = st.x, cy = st.y;
+        for (let i = 0; i <= steps; i++) {
+          pts.push([cx, cy]);
+          const a = flowAt(cx, cy) + Math.sin(i * 0.5 + st.seed) * 0.12;
+          cx -= Math.cos(a) * (st.len / steps);
+          cy -= Math.sin(a) * (st.len / steps);
+        }
+        pencil(pts, st.alpha * fade * 1.15, st.wgt, 1);
+        // the streak has width: parallel lines to either side, each trimmed
+        // to a different length so the band frays instead of looking ruled.
+        // Drawn as one path per streak (normals cached from the spine).
+        const nrm = pts.map((p) => {
+          const a = flowAt(p[0], p[1]);
+          return [-Math.sin(a), Math.cos(a)];
+        });
+        ctx.beginPath();
+        for (let b = 1; b <= st.band; b++) {
+          for (const dir of [1, -1]) {
+            const off = dir * (6 + b * (6 + st.wgt * 3.2));
+            const from = Math.round(pts.length * (0.06 * b + (dir > 0 ? 0 : 0.12)));
+            const to = Math.round(pts.length * (1 - 0.1 * b - (dir > 0 ? 0.08 : 0)));
+            if (to - from < 3) continue;
+            for (let i = from; i < to; i++) {
+              const x = pts[i][0] + nrm[i][0] * off + jit(i * 3 + b * 101) * 1.1;
+              const y = pts[i][1] + nrm[i][1] * off + jit(i * 7 + b * 57) * 1.1;
+              if (i === from) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+            }
+          }
+        }
+        ctx.strokeStyle = 'rgba(' + graphite + ',' + (st.alpha * fade * 0.5 * weight).toFixed(3) + ')';
+        ctx.lineWidth = st.wgt * 0.7;
+        ctx.stroke();
       }
 
       // dropped stones: rings spread and fade, and the swell rocks the boat
@@ -308,27 +452,88 @@ class Component extends DCLogic {
 
       // a snack to fetch, otherwise the boat keeps its own long lazy course
       const snack = drops.find((d) => d.snack);
-      const tgt = snack || { x: W * 0.5 + Math.cos(t * 0.12) * W * 0.34, y: H * 0.45 + Math.sin(t * 0.17) * H * 0.22 };
+      const ph0 = boat.phase || 0;
+      const tgt = snack || {
+        x: W * 0.5 + Math.cos(t * 0.12 + ph0) * W * 0.34,
+        y: H * 0.45 + Math.sin(t * 0.17 + ph0 * 1.7) * H * 0.22
+      };
       const dx = tgt.x - boat.x, dy = tgt.y - boat.y;
       const dist = Math.hypot(dx, dy);
       let diff = Math.atan2(dy, dx) - boat.a;
       while (diff > Math.PI) diff -= Math.PI * 2;
       while (diff < -Math.PI) diff += Math.PI * 2;
-      boat.a += Math.max(-1.5 * dt, Math.min(1.5 * dt, diff));
-      const v = 78 * Math.min(1, Math.max(0.18, dist / 120));
+      boat.a += Math.max(-0.7 * dt, Math.min(0.7 * dt, diff));
+      const v = 30 * Math.min(1, Math.max(0.2, dist / 120));
       boat.x += Math.cos(boat.a) * v * dt;
       boat.y += Math.sin(boat.a) * v * dt;
+      // the current carries the boat too
+      const bf = flowVec(boat.x, boat.y);
+      boat.x += bf[0] * 18 * dt;
+      boat.y += bf[1] * 18 * dt;
       const m = 90;
       if (boat.x < -m) boat.x = W + m; if (boat.x > W + m) boat.x = -m;
       if (boat.y < -m) boat.y = H + m; if (boat.y > H + m) boat.y = -m;
 
       // wake
-      boat.wake.push([boat.x - Math.cos(boat.a) * 32, boat.y - Math.sin(boat.a) * 32]);
-      if (boat.wake.length > 46) boat.wake.shift();
+      // Wake: a churned centre trail plus two diverging bow waves that widen
+      // and fade with age, each particle then drifting with the water.
       const w = boat.wake;
-      let cut = 0;
-      for (let i = 1; i < w.length; i++) if (Math.hypot(w[i][0] - w[i - 1][0], w[i][1] - w[i - 1][1]) > 120) cut = i;
-      if (w.length - cut > 4) pencil(w.slice(cut), 0.16, 1.1, 1);
+      const sx0 = boat.x - Math.cos(boat.a) * 30, sy0 = boat.y - Math.sin(boat.a) * 30;
+      const lastP = w[w.length - 1];
+      if (!lastP || Math.hypot(sx0 - lastP.x, sy0 - lastP.y) > 5) {
+        w.push({ x: sx0, y: sy0, a: boat.a, t: now, v: v, jog: Math.random() - 0.5 });
+      }
+      const life = 4200;
+      while (w.length && now - w[0].t > life) w.shift();
+      if (w.length > 120) w.shift();
+      // let the wake drift and spread on the current
+      for (const p of w) {
+        const fv2 = flowVec(p.x, p.y);
+        p.x += fv2[0] * 20 * dt;
+        p.y += fv2[1] * 20 * dt;
+      }
+      if (w.length > 3) {
+        const segs = [];
+        let run = [w[0]];
+        for (let i = 1; i < w.length; i++) {
+          if (Math.hypot(w[i].x - w[i - 1].x, w[i].y - w[i - 1].y) > 90) { segs.push(run); run = []; }
+          run.push(w[i]);
+        }
+        segs.push(run);
+        for (const run2 of segs) {
+          if (run2.length < 3) continue;
+          const left = [], right = [], centre = [];
+          for (let i = 0; i < run2.length; i++) {
+            const p = run2[i];
+            const age = Math.min(1, (now - p.t) / life);
+            const spread = 3 + age * 30 * Math.min(1, p.v / 28);
+            const nx = -Math.sin(p.a), ny = Math.cos(p.a);
+            const wob = Math.sin(age * 9 + p.jog * 4) * age * 3;
+            left.push([p.x + nx * (spread + wob), p.y + ny * (spread + wob)]);
+            right.push([p.x - nx * (spread - wob), p.y - ny * (spread - wob)]);
+            centre.push([p.x + nx * p.jog * 2.5, p.y + ny * p.jog * 2.5]);
+          }
+          // the two bow waves, strongest near the transom
+          const near = Math.max(3, Math.round(run2.length * 0.8));
+          pencil(left.slice(-near), 0.14, 1.2, 2);
+          pencil(right.slice(-near), 0.14, 1.2, 2);
+          pencil(left.slice(0, -near + 1), 0.05, 1.0, 1);
+          pencil(right.slice(0, -near + 1), 0.05, 1.0, 1);
+          // churned water down the middle, broken into short ticks
+          for (let i = run2.length - 1; i >= 0; i -= 2) {
+            const p = run2[i];
+            const age = Math.min(1, (now - p.t) / life);
+            if (age > 0.62) continue;
+            const nx = -Math.sin(p.a), ny = Math.cos(p.a);
+            const sp = (2 + age * 22) * (0.4 + Math.abs(p.jog));
+            pencil([
+              [p.x + nx * sp * 0.5, p.y + ny * sp * 0.5],
+              [p.x - nx * sp * 0.5, p.y - ny * sp * 0.5]
+            ], 0.14 * (1 - age / 0.62), 1.1, 1);
+          }
+          pencil(centre.slice(-Math.max(4, Math.round(run2.length * 0.35))), 0.1, 1.0, 1);
+        }
+      }
 
       // collect the snack, then carry on
       if (snack && Math.hypot(snack.x - boat.x, snack.y - boat.y) < 26) {
